@@ -22,6 +22,29 @@ import { ImageCropper } from "@/components/image-cropper";
 type Section = "overview" | "events" | "members";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // pre-compression guard: 10 MB
+const SAVE_TIMEOUT_MS = 15_000; // fail fast if Firestore is unreachable
+
+function withTimeout<T>(promise: Promise<T>, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(
+        new Error(
+          `${label} timed out after ${SAVE_TIMEOUT_MS / 1000}s. Check your internet connection, or confirm Cloud Firestore is enabled for this project.`,
+        ),
+      );
+    }, SAVE_TIMEOUT_MS);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
 
 const emptyEventForm = {
   title: "",
@@ -70,6 +93,9 @@ export default function AdminPage() {
   const [eventCroppedData, setEventCroppedData] = useState("");
   const [eventCropperSrc, setEventCropperSrc] = useState("");
   const [eventMessage, setEventMessage] = useState("");
+  const [eventMessageKind, setEventMessageKind] = useState<"info" | "error">(
+    "info",
+  );
   const [savingEvent, setSavingEvent] = useState(false);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
 
@@ -81,6 +107,9 @@ export default function AdminPage() {
   const [memberCroppedData, setMemberCroppedData] = useState("");
   const [memberCropperSrc, setMemberCropperSrc] = useState("");
   const [memberMessage, setMemberMessage] = useState("");
+  const [memberMessageKind, setMemberMessageKind] = useState<
+    "info" | "error"
+  >("info");
   const [savingMember, setSavingMember] = useState(false);
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
 
@@ -103,13 +132,13 @@ export default function AdminPage() {
 
   const saveEvent = async () => {
     if (!eventForm.title || !eventForm.date || !eventForm.location) {
+      setEventMessageKind("error");
       setEventMessage("Please fill title, location and date.");
       return;
     }
     setSavingEvent(true);
-    setEventMessage(
-      editingEventId ? "Saving changes..." : "Publishing...",
-    );
+    setEventMessageKind("info");
+    setEventMessage(editingEventId ? "Saving changes..." : "Publishing...");
     try {
       let bannerData = eventCroppedData || eventForm.banner;
       if (!eventCroppedData && eventBannerFile) {
@@ -134,10 +163,12 @@ export default function AdminPage() {
         details: eventForm.details || "",
       };
       if (editingEventId) {
-        await patchEvent(editingEventId, payload);
+        await withTimeout(patchEvent(editingEventId, payload), "Updating event");
+        setEventMessageKind("info");
         setEventMessage("Event updated successfully.");
       } else {
-        await createEvent(payload);
+        await withTimeout(createEvent(payload), "Publishing event");
+        setEventMessageKind("info");
         setEventMessage("Event published and visible on the site.");
       }
       setEventForm(emptyEventForm);
@@ -146,6 +177,7 @@ export default function AdminPage() {
       setEventCroppedData("");
       setEditingEventId(null);
     } catch (err) {
+      setEventMessageKind("error");
       setEventMessage(
         err instanceof Error ? err.message : "Failed to save event.",
       );
@@ -201,13 +233,13 @@ export default function AdminPage() {
       !memberForm.role ||
       !memberForm.joinedDate
     ) {
+      setMemberMessageKind("error");
       setMemberMessage("Please fill name, role and joined date.");
       return;
     }
     setSavingMember(true);
-    setMemberMessage(
-      editingMemberId ? "Saving changes..." : "Publishing...",
-    );
+    setMemberMessageKind("info");
+    setMemberMessage(editingMemberId ? "Saving changes..." : "Publishing...");
     try {
       let passportData = memberCroppedData || memberForm.passport;
       if (!memberCroppedData && memberPassportFile) {
@@ -217,6 +249,7 @@ export default function AdminPage() {
         });
       }
       if (!passportData) {
+        setMemberMessageKind("error");
         setMemberMessage(
           "Please upload a passport photo or enter a Passport URL before publishing.",
         );
@@ -232,10 +265,15 @@ export default function AdminPage() {
         joinedDate: memberForm.joinedDate,
       };
       if (editingMemberId) {
-        await patchMember(editingMemberId, payload);
+        await withTimeout(
+          patchMember(editingMemberId, payload),
+          "Updating member",
+        );
+        setMemberMessageKind("info");
         setMemberMessage("Member updated successfully.");
       } else {
-        await createMember(payload);
+        await withTimeout(createMember(payload), "Publishing member");
+        setMemberMessageKind("info");
         setMemberMessage("Member published and visible on the site.");
       }
       setMemberForm(emptyMemberForm);
@@ -244,6 +282,7 @@ export default function AdminPage() {
       setMemberCroppedData("");
       setEditingMemberId(null);
     } catch (err) {
+      setMemberMessageKind("error");
       setMemberMessage(
         err instanceof Error ? err.message : "Failed to save member.",
       );
@@ -596,7 +635,15 @@ export default function AdminPage() {
                 </select>
               </label>
               {eventMessage ? (
-                <p className="text-xs text-cyan-200">{eventMessage}</p>
+                <p
+                  className={`rounded-lg border px-3 py-2 text-xs ${
+                    eventMessageKind === "error"
+                      ? "border-rose-400/40 bg-rose-500/10 text-rose-200"
+                      : "border-cyan-200/20 bg-cyan-400/5 text-cyan-200"
+                  }`}
+                >
+                  {eventMessage}
+                </p>
               ) : null}
               <div className="flex gap-2">
                 <button
@@ -756,7 +803,15 @@ export default function AdminPage() {
                 }
               />
               {memberMessage ? (
-                <p className="text-xs text-cyan-200">{memberMessage}</p>
+                <p
+                  className={`rounded-lg border px-3 py-2 text-xs ${
+                    memberMessageKind === "error"
+                      ? "border-rose-400/40 bg-rose-500/10 text-rose-200"
+                      : "border-cyan-200/20 bg-cyan-400/5 text-cyan-200"
+                  }`}
+                >
+                  {memberMessage}
+                </p>
               ) : null}
               <div className="flex gap-2">
                 <button
