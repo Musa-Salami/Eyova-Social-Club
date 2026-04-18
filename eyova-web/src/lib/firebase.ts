@@ -3,13 +3,12 @@ import { getFirestore, type Firestore } from "firebase/firestore";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  projectId: "omis-electrical",
-  appId: "1:976127650384:web:73840046add94aefc53f55",
-  storageBucket: "omis-electrical.firebasestorage.app",
-  apiKey: "AIzaSyBZoUaDqJttlCbKJPJ86N5E9qZ-sBi79Bg",
-  authDomain: "omis-electrical.firebaseapp.com",
-  messagingSenderId: "976127650384",
-  measurementId: "G-GPMYGD7E4X",
+  projectId: "eyova-social-club",
+  appId: "1:45917804068:web:51be797c9078f151352ab1",
+  storageBucket: "eyova-social-club.firebasestorage.app",
+  apiKey: "AIzaSyBbN64mbtCryoLHbSJALBmOOdliVnhjuaY",
+  authDomain: "eyova-social-club.firebaseapp.com",
+  messagingSenderId: "45917804068",
 };
 
 let app: FirebaseApp | null = null;

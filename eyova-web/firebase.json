@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "eyova-club",
+    "site": "eyova-social-club",
     "public": "out",
     "cleanUrls": true,
     "trailingSlash": false,
