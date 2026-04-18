@@ -1,0 +1,16 @@
+rules_version = '2';
+
+// Eyova Social Club - public read / open write for uploaded images.
+// Tighten with Firebase Auth and custom claims before going to production.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /members/{imageId} {
+      allow read: if true;
+      allow write: if true;
+    }
+    match /events/{imageId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}

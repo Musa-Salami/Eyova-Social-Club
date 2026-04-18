@@ -1,0 +1,17 @@
+rules_version = '2';
+
+// Eyova Social Club - public read / open write for events and members.
+// Admin-only writes are enforced client-side via the /admin/login flow.
+// Tighten this by adding Firebase Auth and custom claims when ready.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /events/{docId} {
+      allow read: if true;
+      allow write: if true;
+    }
+    match /members/{docId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}

@@ -1,0 +1,412 @@
+EYOVA SOCIAL CLUB WEB APP - TECHNICAL IMPLEMENTATION SPECIFICATION
+Version: 1.0
+Date: 2026-04-16
+Audience: Product Owner, UI/UX Designer, Frontend Engineer, Backend Engineer, QA Engineer, DevOps Engineer
+
+=====================================================================
+1) PROJECT OVERVIEW
+=====================================================================
+Eyova Social Club is a modern web application platform for managing club activities, events, and member information.
+The platform focuses on:
+- A simple but insightful activities dashboard.
+- An admin-controlled content management workflow (create, upload, update information).
+- Public/member-facing information page showing passed and upcoming events.
+- Members page with passport photo and biodata.
+- A highly interactive, premium UI/UX with responsive and accessible design.
+
+Primary User Roles:
+1. Visitor/Public User: Can view published event information and member directory (subject to access rules).
+2. Member (optional phase 2): Can view member-only updates and personal profile details.
+3. Admin: Can create/update events, upload media, and manage members biodata from admin dashboard.
+4. Super Admin (optional): Can manage admin permissions and governance settings.
+
+=====================================================================
+2) PRODUCT GOALS AND SUCCESS METRICS
+=====================================================================
+Business Goals:
+- Centralize club communication and activities visibility.
+- Reduce manual data handling by introducing a web-based admin workflow.
+- Improve member engagement using visually rich, interactive interfaces.
+
+Technical Success Metrics:
+- Lighthouse score: >= 90 (Performance, Accessibility, Best Practices, SEO).
+- Core Web Vitals: LCP <= 2.5s, INP <= 200ms, CLS <= 0.1.
+- API average response time <= 300ms for cached reads.
+- Image upload success rate >= 99.5%.
+- Error rate < 1% for critical user flows.
+
+=====================================================================
+3) CORE FEATURE REQUIREMENTS
+=====================================================================
+3.1 Dashboard (Club Activities)
+- Display key activity metrics:
+  - Total events (upcoming/past).
+  - Total members.
+  - Recent updates/posts.
+  - Admin action feed (last updates).
+- Provide quick cards:
+  - Upcoming next event.
+  - Last completed event.
+  - New members this month.
+- Optional charts:
+  - Events by month.
+  - Member growth trend.
+
+3.2 Admin Page (Create, Upload, Update)
+- Event Management:
+  - Create event (title, description, location, datetime, category, status).
+  - Update event details.
+  - Upload event banner/gallery images.
+  - Set event as Upcoming or Passed automatically by date (with override option).
+- Member Management:
+  - Add member biodata (name, role, contact, bio).
+  - Upload member passport photo.
+  - Edit/deactivate members.
+- Content Moderation:
+  - Draft vs Published state for events.
+  - Soft delete with restore.
+  - Audit trail for changes (who edited what and when).
+
+3.3 Information Page (Passed and Upcoming Events)
+- Two clear sections:
+  - Upcoming Events.
+  - Passed Events.
+- Sorting/filtering:
+  - Date, category, keyword search.
+- Event cards:
+  - Banner image, title, date, venue, short description, CTA ("View Details").
+- Event details page:
+  - Full description, agenda (optional), gallery, organizer contact.
+
+3.4 Members Page (Passport + Biodata)
+- Grid/list toggle for members.
+- Each member profile card:
+  - Passport photo.
+  - Full name.
+  - Role/position.
+  - Biodata summary.
+  - Optional social/contact links.
+- Details modal/page:
+  - Extended biodata, joined date, contribution highlights.
+- Privacy settings:
+  - Public fields vs private fields configurable by admin.
+
+=====================================================================
+4) NON-FUNCTIONAL REQUIREMENTS
+=====================================================================
+- Responsive design: mobile-first, tablet, desktop breakpoints.
+- Accessibility: WCAG 2.1 AA.
+- Security: OWASP best practices.
+- Scalability: ready for growing member count and media assets.
+- Reliability: automated backups and monitoring.
+- Maintainability: modular architecture, typed APIs, and test coverage.
+
+=====================================================================
+5) RECOMMENDED TECH STACK
+=====================================================================
+Frontend:
+- Framework: Next.js (App Router) + TypeScript.
+- UI: Tailwind CSS + shadcn/ui (or MUI if enterprise preference).
+- State/Data: TanStack Query + React Hook Form + Zod validation.
+- Animations/Interactivity: Framer Motion.
+- Charts: Recharts (dashboard analytics widgets).
+
+Backend:
+- Option A (recommended): Next.js API routes + server actions for lightweight full-stack.
+- Option B: Node.js (NestJS/Express) dedicated API service.
+- Auth: NextAuth/Auth.js with role-based authorization.
+
+Database:
+- PostgreSQL (primary relational database).
+- ORM: Prisma.
+- Caching: Redis (optional for high-read optimization).
+
+Storage:
+- Cloudinary or AWS S3 for passport/event image uploads.
+- Signed URLs + image optimization pipeline.
+
+DevOps/Deployment:
+- Hosting: Vercel (frontend/full-stack Next.js) or Render/AWS.
+- CI/CD: GitHub Actions.
+- Observability: Sentry + basic uptime checks.
+
+=====================================================================
+6) HIGH-LEVEL ARCHITECTURE
+=====================================================================
+Client (Web Browser)
+    |
+    v
+Next.js Frontend (UI + Routing + SSR/CSR hybrid)
+    |
+    +----> Auth Layer (session/JWT + RBAC checks)
+    |
+    +----> API Layer (REST/Server Actions)
+                |
+                +----> PostgreSQL (members, events, audit logs)
+                |
+                +----> Object Storage (passport photos, event images)
+                |
+                +----> Optional Redis cache
+
+=====================================================================
+7) DETAILED WORKFLOW DIAGRAM (PROCESS FLOWCHART)
+=====================================================================
+Use this Mermaid diagram in documentation tools that support Mermaid.
+
+flowchart TD
+    A[User Opens Eyova App] --> B{Authenticated?}
+    B -- No --> C[View Public Information and Members Pages]
+    B -- Yes --> D{Role Check}
+    D -- Admin --> E[Open Admin Dashboard]
+    D -- Member --> F[View Member Features]
+    C --> G[Browse Upcoming/Passed Events]
+    C --> H[Browse Members with Passport/Biodata]
+    E --> I[Create or Update Event]
+    E --> J[Create or Update Member Biodata]
+    E --> K[Upload Passport/Event Images]
+    I --> L[Validate Form Data]
+    J --> L
+    K --> M[Upload to Cloud Storage]
+    L --> N[Save to PostgreSQL via API]
+    M --> N
+    N --> O[Write Audit Log]
+    O --> P[Refresh Dashboard Metrics]
+    P --> Q[Published Updates Visible on Information/Members Pages]
+
+Alternative ASCII Diagram:
+
++-------------------+       +--------------------+       +----------------------+
+| Browser UI        | ----> | Next.js API/Auth   | ----> | PostgreSQL Database  |
++-------------------+       +--------------------+       +----------------------+
+         |                             |
+         |                             +------------------> +----------------------+
+         |                                                | Object Storage (S3)  |
+         +---------------------- Read Published Data <-----+----------------------+
+
+=====================================================================
+8) INFORMATION ARCHITECTURE (PAGES AND ROUTES)
+=====================================================================
+Public Routes:
+- /                      -> Home (hero, quick stats, CTA)
+- /information           -> Events listing (upcoming + passed)
+- /information/[slug]    -> Event detail page
+- /members               -> Members directory (passport + biodata)
+- /about                 -> About Eyova Social Club
+
+Protected Routes:
+- /admin                 -> Admin dashboard
+- /admin/events          -> Event management
+- /admin/members         -> Members management
+- /admin/uploads         -> Upload center
+- /admin/audit           -> Audit logs
+
+Optional:
+- /login                 -> Admin authentication
+- /profile               -> Member account/profile
+
+=====================================================================
+9) DATABASE SCHEMA (PROPOSED)
+=====================================================================
+Table: users
+- id (uuid, pk)
+- email (unique)
+- password_hash
+- role (enum: ADMIN, MEMBER, SUPER_ADMIN)
+- created_at, updated_at
+
+Table: members
+- id (uuid, pk)
+- full_name
+- position
+- passport_image_url
+- biodata_short
+- biodata_full
+- contact_email (optional/public toggle)
+- contact_phone (optional/public toggle)
+- joined_date
+- is_active (boolean)
+- created_by (fk -> users.id)
+- created_at, updated_at
+
+Table: events
+- id (uuid, pk)
+- slug (unique)
+- title
+- description_short
+- description_full
+- event_date (timestamp)
+- location
+- category
+- banner_image_url
+- status (enum: UPCOMING, PASSED, DRAFT)
+- published (boolean)
+- created_by (fk -> users.id)
+- created_at, updated_at
+
+Table: event_media
+- id (uuid, pk)
+- event_id (fk -> events.id)
+- media_url
+- media_type (enum: IMAGE, VIDEO)
+- created_at
+
+Table: audit_logs
+- id (uuid, pk)
+- actor_user_id (fk -> users.id)
+- action_type (CREATE, UPDATE, DELETE, PUBLISH, RESTORE)
+- entity_type (EVENT, MEMBER, USER)
+- entity_id
+- before_state (jsonb)
+- after_state (jsonb)
+- created_at
+
+=====================================================================
+10) API CONTRACT (SAMPLE ENDPOINTS)
+=====================================================================
+Auth:
+- POST /api/auth/login
+- POST /api/auth/logout
+
+Events:
+- GET /api/events?status=UPCOMING|PASSED
+- GET /api/events/:slug
+- POST /api/admin/events
+- PUT /api/admin/events/:id
+- DELETE /api/admin/events/:id (soft delete)
+
+Members:
+- GET /api/members
+- GET /api/members/:id
+- POST /api/admin/members
+- PUT /api/admin/members/:id
+- DELETE /api/admin/members/:id (soft deactivate)
+
+Uploads:
+- POST /api/admin/uploads/presign
+- POST /api/admin/uploads/complete
+
+Audit:
+- GET /api/admin/audit-logs
+
+API Standards:
+- JSON response with consistent shape:
+  {
+    "success": true/false,
+    "message": "human readable message",
+    "data": {...},
+    "error": {...}
+  }
+- Validate all input with Zod/Joi.
+- Return proper HTTP codes (200, 201, 400, 401, 403, 404, 409, 500).
+
+=====================================================================
+11) UI/UX DESIGN SYSTEM (HIGHLY INTERACTIVE + BEAUTIFUL)
+=====================================================================
+Design Principles:
+- Clean, modern, premium visual language.
+- Fast interactions with micro-animations.
+- Strong hierarchy and readability.
+- Mobile-first with adaptive layouts.
+
+Visual Style Direction:
+- Theme: "Elegant Social Tech" (dark and light mode).
+- Color Palette Example:
+  - Primary: #6D28D9 (violet)
+  - Secondary: #0EA5E9 (sky blue)
+  - Accent: #F59E0B (amber)
+  - Neutral backgrounds: slate scale
+- Typography:
+  - Headings: Poppins or Sora
+  - Body: Inter
+- Components:
+  - Glassmorphism cards or subtle gradients.
+  - Soft shadows and rounded corners (12-16px).
+  - Skeleton loaders and hover transitions.
+
+Interactivity Recommendations:
+- Animated section reveals on scroll.
+- Filter chips with smooth transitions.
+- Dashboard counters with count-up animation.
+- Event card hover effects (scale + shadow + CTA highlight).
+- Members profile quick-view modal with animated entry.
+- Optimistic UI updates on admin edits.
+
+Usability Requirements:
+- Clear navigation with sticky top bar.
+- Fast search/filter for events and members.
+- Empty states and success/error states with friendly messages.
+- Keyboard navigation and ARIA labels.
+
+=====================================================================
+12) SECURITY AND GOVERNANCE
+=====================================================================
+- RBAC enforcement at API and UI level.
+- Secure password hashing (bcrypt/argon2).
+- JWT/session protection with HttpOnly secure cookies.
+- CSRF protection for sensitive operations.
+- Input sanitization against XSS and injection.
+- File upload validation (type, size, antivirus if required).
+- Rate limiting for auth and admin APIs.
+- Audit logging for all admin changes.
+
+=====================================================================
+13) TESTING STRATEGY
+=====================================================================
+Unit Tests:
+- Validation schemas, utility functions, permission guards.
+
+Integration Tests:
+- API endpoints for events/members CRUD.
+- Auth flows and role checks.
+
+E2E Tests (Playwright/Cypress):
+- Public browsing of information and members.
+- Admin creates event and uploads image.
+- Admin updates member biodata and passport.
+- Published data appears correctly on public pages.
+
+Performance/Accessibility:
+- Lighthouse CI checks.
+- Automated accessibility checks (axe-core).
+
+=====================================================================
+14) IMPLEMENTATION ROADMAP
+=====================================================================
+Phase 1 - Foundation (Week 1):
+- Initialize Next.js + TypeScript + Tailwind.
+- Setup auth, database, ORM, and base layouts.
+
+Phase 2 - Core Features (Week 2-3):
+- Build Information Page (upcoming/passed events).
+- Build Members Page (passport + biodata).
+- Implement admin CRUD for events and members.
+
+Phase 3 - Interactivity and Polish (Week 4):
+- Add animations, chart widgets, and loading states.
+- Improve responsive behavior and accessibility.
+
+Phase 4 - Quality and Launch (Week 5):
+- Add tests, fix QA issues, optimize assets.
+- Setup CI/CD, monitoring, and production deployment.
+
+=====================================================================
+15) DELIVERABLE CHECKLIST
+=====================================================================
+- [ ] Responsive public pages: Home, Information, Members.
+- [ ] Secure admin dashboard with CRUD and uploads.
+- [ ] Upcoming and passed event segmentation.
+- [ ] Member passport photo and biodata management.
+- [ ] Production-grade UI theme and micro-interactions.
+- [ ] Role-based security and audit logs.
+- [ ] Automated tests + deployment pipeline.
+
+=====================================================================
+16) OPTIONAL FUTURE ENHANCEMENTS
+=====================================================================
+- Event registration/RSVP system.
+- Payment/donation gateway integration.
+- Notifications (email/SMS/WhatsApp).
+- Member badges and achievements.
+- CMS-style page builder for non-technical admins.
+
+END OF SPECIFICATION
