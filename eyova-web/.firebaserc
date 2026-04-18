@@ -1,5 +1,13 @@
 {
   "projects": {
     "default": "eyova-social-club"
+  },
+  "targets": {
+    "eyova-social-club": {
+      "hosting": {
+        "main": ["eyovasocialclub"],
+        "legacy": ["eyova-social-club"]
+      }
+    }
   }
 }
