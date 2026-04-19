@@ -81,33 +81,12 @@ const HeartIcon: NavIcon = (props) => (
 const navLinks: {
   href: string;
   label: string;
-  description: string;
   Icon: NavIcon;
 }[] = [
-  {
-    href: "/",
-    label: "Home",
-    description: "Welcome & overview",
-    Icon: HomeIcon,
-  },
-  {
-    href: "/what-we-do",
-    label: "What we do",
-    description: "Programs & impact",
-    Icon: SparklesIcon,
-  },
-  {
-    href: "/members",
-    label: "Members",
-    description: "Our community",
-    Icon: UsersIcon,
-  },
-  {
-    href: "/donate",
-    label: "Donate",
-    description: "Support our mission",
-    Icon: HeartIcon,
-  },
+  { href: "/", label: "Home", Icon: HomeIcon },
+  { href: "/what-we-do", label: "What we do", Icon: SparklesIcon },
+  { href: "/members", label: "Members", Icon: UsersIcon },
+  { href: "/donate", label: "Donate", Icon: HeartIcon },
 ];
 
 export function SiteHeader() {
@@ -133,17 +112,17 @@ export function SiteHeader() {
         </Link>
         <nav
           aria-label="Primary"
-          className="scrollbar-none ml-auto inline-flex flex-wrap items-center gap-1 overflow-x-auto rounded-2xl border border-cyan-200/15 bg-slate-950/60 p-1 text-xs"
+          className="scrollbar-none ml-auto inline-flex flex-wrap items-center gap-1 overflow-x-auto rounded-full border border-cyan-200/15 bg-slate-950/60 p-1 text-xs"
         >
-          {navLinks.map(({ href, label, description, Icon }) => {
+          {navLinks.map(({ href, label, Icon }) => {
             const active =
               href === "/" ? pathname === "/" : pathname?.startsWith(href);
             return (
               <Link
                 key={href}
                 href={href}
-                aria-label={`${label} – ${description}`}
-                className={`group flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-1.5 font-semibold transition ${
+                aria-label={label}
+                className={`group inline-flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 font-semibold transition ${
                   active
                     ? "bg-amber-400 text-slate-950"
                     : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
@@ -154,16 +133,7 @@ export function SiteHeader() {
                     active ? "text-slate-950" : "text-cyan-300"
                   }`}
                 />
-                <span className="flex flex-col leading-tight">
-                  <span>{label}</span>
-                  <span
-                    className={`hidden text-[10px] font-medium tracking-wide sm:inline ${
-                      active ? "text-slate-900/80" : "text-slate-400"
-                    }`}
-                  >
-                    {description}
-                  </span>
-                </span>
+                <span>{label}</span>
               </Link>
             );
           })}
