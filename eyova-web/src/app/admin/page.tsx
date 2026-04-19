@@ -434,27 +434,40 @@ export default function AdminPage() {
           </button>
         </div>
 
-        <div className="mt-6 inline-flex flex-wrap rounded-full border border-cyan-200/15 bg-slate-950/60 p-1 text-xs">
+        <div className="mt-6 inline-flex flex-wrap gap-1 rounded-full border border-cyan-200/15 bg-slate-950/60 p-1 text-xs">
           {(
             [
-              { id: "overview", label: "Overview" },
-              { id: "events", label: "Events" },
-              { id: "members", label: "Members" },
-            ] as { id: Section; label: string }[]
-          ).map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setSection(item.id)}
-              className={`rounded-full px-4 py-1.5 font-semibold transition ${
-                section === item.id
-                  ? "bg-amber-400 text-slate-950"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+              { id: "overview", label: "Overview", Icon: OverviewIcon },
+              { id: "events", label: "Events", Icon: EventsIcon },
+              { id: "members", label: "Members", Icon: MembersIcon },
+            ] as {
+              id: Section;
+              label: string;
+              Icon: (props: React.SVGProps<SVGSVGElement>) => React.ReactElement;
+            }[]
+          ).map((item) => {
+            const active = section === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setSection(item.id)}
+                aria-label={item.label}
+                className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 font-semibold transition ${
+                  active
+                    ? "bg-amber-400 text-slate-950"
+                    : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+                }`}
+              >
+                <item.Icon
+                  className={`h-4 w-4 shrink-0 ${
+                    active ? "text-slate-950" : "text-cyan-300"
+                  }`}
+                />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
         </div>
       </header>
 
@@ -949,6 +962,66 @@ export default function AdminPage() {
         />
       ) : null}
     </section>
+  );
+}
+
+function OverviewIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <rect x="3" y="3" width="7" height="9" rx="1.5" />
+      <rect x="14" y="3" width="7" height="5" rx="1.5" />
+      <rect x="14" y="12" width="7" height="9" rx="1.5" />
+      <rect x="3" y="16" width="7" height="5" rx="1.5" />
+    </svg>
+  );
+}
+
+function EventsIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <rect x="3.5" y="5" width="17" height="15" rx="2" />
+      <path d="M8 3v4" />
+      <path d="M16 3v4" />
+      <path d="M3.5 10h17" />
+    </svg>
+  );
+}
+
+function MembersIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M3 20c.8-3.2 3.4-5 6-5s4.8 1.5 5.6 4" />
+      <circle cx="17" cy="9" r="2.6" />
+      <path d="M15.5 14.2c2.9.2 4.7 1.9 5.5 4.8" />
+    </svg>
   );
 }
 
