@@ -9,17 +9,20 @@ import type { ClubEvent, Member } from "@/lib/data";
 import { formatDate } from "@/lib/data";
 import {
   createEvent,
+  createGalleryImage,
   createMember,
   deleteEvent as removeEvent,
+  deleteGalleryImage as removeGalleryImage,
   deleteMember as removeMember,
   updateEvent as patchEvent,
   updateMember as patchMember,
 } from "@/lib/content-store";
-import { useEvents, useMembers } from "@/hooks/use-content";
+import { useEvents, useGallery, useMembers } from "@/hooks/use-content";
 import { compressImage } from "@/lib/image";
 import { ImageCropper } from "@/components/image-cropper";
+import { COMMUNITY_PHOTOS } from "@/lib/community-photos";
 
-type Section = "overview" | "events" | "members";
+type Section = "overview" | "events" | "members" | "gallery";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // pre-compression guard: 10 MB
 const SAVE_TIMEOUT_MS = 15_000; // fail fast if Firestore is unreachable
@@ -86,6 +89,18 @@ export default function AdminPage() {
 
   const { events, loading: loadingEvents } = useEvents();
   const { members, loading: loadingMembers } = useMembers();
+  const { gallery, loading: loadingGallery } = useGallery();
+
+  const [galleryTitle, setGalleryTitle] = useState("");
+  const [galleryFile, setGalleryFile] = useState<File | null>(null);
+  const [galleryPreview, setGalleryPreview] = useState("");
+  const [galleryCroppedData, setGalleryCroppedData] = useState("");
+  const [galleryCropperSrc, setGalleryCropperSrc] = useState("");
+  const [galleryMessage, setGalleryMessage] = useState("");
+  const [galleryMessageKind, setGalleryMessageKind] = useState<
+    "info" | "error"
+  >("info");
+  const [savingGallery, setSavingGallery] = useState(false);
 
   const [eventForm, setEventForm] = useState(emptyEventForm);
   const [eventBannerFile, setEventBannerFile] = useState<File | null>(null);
@@ -354,6 +369,96 @@ export default function AdminPage() {
     event.target.value = "";
   };
 
+  const onGalleryUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (file.size > MAX_IMAGE_BYTES) {
+      setGalleryMessageKind("error");
+      setGalleryMessage("Image too large. Please choose a file under 10 MB.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      if (!result) {
+        setGalleryMessageKind("error");
+        setGalleryMessage("Could not read the selected image.");
+        return;
+      }
+      setGalleryFile(file);
+      setGalleryCropperSrc(result);
+      setGalleryMessageKind("info");
+      setGalleryMessage("Adjust the crop to fit the carousel frame.");
+    };
+    reader.onerror = () => {
+      setGalleryMessageKind("error");
+      setGalleryMessage("Failed to read file.");
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  };
+
+  const saveGalleryImage = async () => {
+    let imageData = galleryCroppedData;
+    if (!imageData && galleryFile) {
+      try {
+        imageData = await compressImage(galleryFile, {
+          maxDim: 1400,
+          quality: 0.8,
+        });
+      } catch (err) {
+        setGalleryMessageKind("error");
+        setGalleryMessage(
+          err instanceof Error ? err.message : "Failed to compress image.",
+        );
+        return;
+      }
+    }
+    if (!imageData) {
+      setGalleryMessageKind("error");
+      setGalleryMessage("Please choose an image to upload first.");
+      return;
+    }
+    setSavingGallery(true);
+    setGalleryMessageKind("info");
+    setGalleryMessage("Publishing image...");
+    try {
+      await withTimeout(
+        createGalleryImage({
+          url: imageData,
+          title: galleryTitle.trim() || undefined,
+        }),
+        "Publishing gallery image",
+      );
+      setGalleryTitle("");
+      setGalleryFile(null);
+      setGalleryPreview("");
+      setGalleryCroppedData("");
+      setGalleryMessageKind("info");
+      setGalleryMessage("Image added to the carousel.");
+    } catch (err) {
+      setGalleryMessageKind("error");
+      setGalleryMessage(
+        err instanceof Error ? err.message : "Failed to publish image.",
+      );
+    } finally {
+      setSavingGallery(false);
+    }
+  };
+
+  const deleteGallery = async (id: string) => {
+    try {
+      await removeGalleryImage(id);
+      setGalleryMessageKind("info");
+      setGalleryMessage("Image removed from the carousel.");
+    } catch (err) {
+      setGalleryMessageKind("error");
+      setGalleryMessage(
+        err instanceof Error ? err.message : "Failed to delete image.",
+      );
+    }
+  };
+
   const onBannerUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -440,6 +545,7 @@ export default function AdminPage() {
               { id: "overview", label: "Overview", Icon: OverviewIcon },
               { id: "events", label: "Events", Icon: EventsIcon },
               { id: "members", label: "Members", Icon: MembersIcon },
+              { id: "gallery", label: "Gallery", Icon: GalleryIcon },
             ] as {
               id: Section;
               label: string;
@@ -918,6 +1024,139 @@ export default function AdminPage() {
         </div>
       ) : null}
 
+      {section === "gallery" ? (
+        <div className="grid gap-6 lg:grid-cols-2">
+          <section className="glass-card rounded-2xl p-5">
+            <h2 className="text-xl font-semibold text-cyan-200">
+              Add Carousel Image
+            </h2>
+            <p className="mt-1 text-xs text-slate-400">
+              Uploaded images appear in the rotating carousel across the site
+              immediately after publishing.
+            </p>
+            <div className="mt-4 space-y-3">
+              <Input
+                label="Caption (optional)"
+                value={galleryTitle}
+                onChange={setGalleryTitle}
+              />
+              <FileInput
+                label="Upload Image"
+                onChange={onGalleryUpload}
+                preview={galleryPreview}
+                onRecrop={
+                  galleryPreview
+                    ? () => setGalleryCropperSrc(galleryPreview)
+                    : undefined
+                }
+              />
+              {galleryMessage ? (
+                <p
+                  className={`rounded-lg border px-3 py-2 text-xs ${
+                    galleryMessageKind === "error"
+                      ? "border-rose-400/40 bg-rose-500/10 text-rose-200"
+                      : "border-cyan-200/20 bg-cyan-400/5 text-cyan-200"
+                  }`}
+                >
+                  {galleryMessage}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                onClick={saveGalleryImage}
+                disabled={savingGallery}
+                className="w-full rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300 disabled:opacity-60"
+              >
+                {savingGallery ? "Publishing..." : "Publish Image"}
+              </button>
+            </div>
+          </section>
+
+          <section className="glass-card rounded-2xl p-5">
+            <h2 className="text-xl font-semibold text-cyan-200">
+              Carousel Library
+            </h2>
+            <p className="mt-1 text-xs text-slate-400">
+              Uploaded images can be removed. Default photos are built into the
+              site and always display.
+            </p>
+            {loadingGallery ? (
+              <p className="mt-4 text-xs text-slate-400">Loading images...</p>
+            ) : null}
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {gallery.map((image) => (
+                <figure
+                  key={image.id}
+                  className="group relative overflow-hidden rounded-xl border border-cyan-200/20 bg-slate-950/60"
+                >
+                  <div className="relative aspect-square w-full">
+                    <Image
+                      src={image.url}
+                      alt={image.title || "Gallery image"}
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                  </div>
+                  <figcaption className="flex items-center justify-between gap-2 p-2 text-[11px] text-slate-300">
+                    <span className="truncate">
+                      {image.title || "Untitled"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => deleteGallery(image.id)}
+                      className="rounded-md border border-rose-400/40 px-2 py-0.5 text-[10px] font-semibold text-rose-200 hover:bg-rose-400/10"
+                    >
+                      Remove
+                    </button>
+                  </figcaption>
+                </figure>
+              ))}
+              {COMMUNITY_PHOTOS.map((url) => (
+                <figure
+                  key={url}
+                  className="relative overflow-hidden rounded-xl border border-cyan-200/15 bg-slate-950/60"
+                >
+                  <div className="relative aspect-square w-full">
+                    <Image
+                      src={url}
+                      alt="Default community image"
+                      fill
+                      className="object-cover opacity-90"
+                    />
+                    <span className="absolute left-2 top-2 rounded-full border border-cyan-200/30 bg-slate-950/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-cyan-200">
+                      Default
+                    </span>
+                  </div>
+                </figure>
+              ))}
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {galleryCropperSrc ? (
+        <ImageCropper
+          imageSrc={galleryCropperSrc}
+          aspect={16 / 9}
+          title="Crop carousel image"
+          subtitle="Pan and zoom to frame the photo for the home and programs carousels."
+          maxDim={1400}
+          quality={0.82}
+          onCancel={() => {
+            setGalleryCropperSrc("");
+            setGalleryFile(null);
+            setGalleryMessage("Image upload cancelled.");
+          }}
+          onApply={(dataUrl) => {
+            setGalleryCroppedData(dataUrl);
+            setGalleryPreview(dataUrl);
+            setGalleryCropperSrc("");
+            setGalleryMessage("Image cropped. Click Publish to save.");
+          }}
+        />
+      ) : null}
+
       {memberCropperSrc ? (
         <ImageCropper
           imageSrc={memberCropperSrc}
@@ -1001,6 +1240,26 @@ function EventsIcon(props: React.SVGProps<SVGSVGElement>) {
       <path d="M8 3v4" />
       <path d="M16 3v4" />
       <path d="M3.5 10h17" />
+    </svg>
+  );
+}
+
+function GalleryIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <rect x="3" y="4" width="18" height="14" rx="2" />
+      <circle cx="9" cy="10" r="1.5" />
+      <path d="m4 16 4.5-4.5a1.5 1.5 0 0 1 2.1 0L16 17" />
+      <path d="m14 14 2-2a1.5 1.5 0 0 1 2.1 0L20 14" />
     </svg>
   );
 }

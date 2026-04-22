@@ -5,12 +5,9 @@ import Link from "next/link";
 import { useState } from "react";
 import { formatDate } from "@/lib/data";
 import type { ClubEvent } from "@/lib/data";
-import { useEvents } from "@/hooks/use-content";
+import { useEvents, useGallery } from "@/hooks/use-content";
 import { EventModal } from "@/components/event-modal";
-import {
-  COMMUNITY_PHOTOS,
-  PhotoCarousel,
-} from "@/components/photo-carousel";
+import { PhotoCarousel } from "@/components/photo-carousel";
 
 const programs = [
   {
@@ -72,11 +69,12 @@ export default function WhatWeDoPage() {
 }
 
 function HeroHeader() {
+  const { carouselImages } = useGallery();
   return (
     <section className="relative isolate overflow-hidden border-b border-cyan-300/10">
       <div className="absolute inset-0 -z-10">
         <PhotoCarousel
-          images={COMMUNITY_PHOTOS}
+          images={carouselImages}
           alt="What we do hero"
           intervalMs={6000}
           priority
@@ -103,6 +101,7 @@ function HeroHeader() {
 }
 
 function ProgramsSection() {
+  const { carouselImages } = useGallery();
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20">
       <div className="mb-8 md:mb-10">
@@ -121,7 +120,7 @@ function ProgramsSection() {
           >
             <div className="relative h-48 w-full overflow-hidden sm:h-56">
               <PhotoCarousel
-                images={COMMUNITY_PHOTOS}
+                images={carouselImages}
                 alt={program.title}
                 intervalMs={6000}
                 startIndex={program.startIndex}

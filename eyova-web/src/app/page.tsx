@@ -5,12 +5,9 @@ import Link from "next/link";
 import { useState } from "react";
 import { formatDate } from "@/lib/data";
 import type { ClubEvent } from "@/lib/data";
-import { useEvents, useMembers } from "@/hooks/use-content";
+import { useEvents, useGallery, useMembers } from "@/hooks/use-content";
 import { EventModal } from "@/components/event-modal";
-import {
-  COMMUNITY_PHOTOS,
-  PhotoCarousel,
-} from "@/components/photo-carousel";
+import { PhotoCarousel } from "@/components/photo-carousel";
 
 export default function Home() {
   const { events } = useEvents();
@@ -62,11 +59,12 @@ function Hero({
     1,
     new Date().getFullYear() - 2022,
   );
+  const { carouselImages } = useGallery();
   return (
     <section className="relative isolate overflow-hidden">
       <div className="absolute inset-0 -z-10">
         <PhotoCarousel
-          images={COMMUNITY_PHOTOS}
+          images={carouselImages}
           alt="Eyova community gathering"
           intervalMs={6000}
           showDots={false}
@@ -137,7 +135,7 @@ function Hero({
             <div className="absolute -inset-6 -z-10 rounded-[32px] bg-gradient-to-br from-cyan-400/20 via-amber-300/10 to-transparent blur-2xl" />
             <div className="relative h-[480px] overflow-hidden rounded-[28px] border border-cyan-200/20 shadow-2xl shadow-cyan-900/30">
               <PhotoCarousel
-                images={COMMUNITY_PHOTOS}
+                images={carouselImages}
                 alt="Eyova Social Club members"
                 intervalMs={5000}
                 priority
@@ -168,13 +166,14 @@ function HeroBadge({ label, value }: { label: string; value: string }) {
 }
 
 function Mission() {
+  const { carouselImages } = useGallery();
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20">
       <div className="grid items-center gap-8 md:grid-cols-2 md:gap-10">
         <div className="relative">
           <div className="relative h-60 overflow-hidden rounded-3xl border border-cyan-200/15 sm:h-72 md:h-[380px]">
             <PhotoCarousel
-              images={COMMUNITY_PHOTOS}
+              images={carouselImages}
               alt="Community initiatives"
               intervalMs={5500}
               startIndex={2}
