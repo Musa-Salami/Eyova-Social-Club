@@ -7,35 +7,35 @@ import { formatDate } from "@/lib/data";
 import type { ClubEvent } from "@/lib/data";
 import { useEvents } from "@/hooks/use-content";
 import { EventModal } from "@/components/event-modal";
+import {
+  COMMUNITY_PHOTOS,
+  PhotoCarousel,
+} from "@/components/photo-carousel";
 
 const programs = [
   {
     title: "Community Outreach",
     description:
       "Volunteer-led outreach to schools and communities, focused on mentorship, civic awareness, and practical digital skills.",
-    image:
-      "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1200&q=80",
+    startIndex: 0,
   },
   {
     title: "Leadership & Mentorship",
     description:
       "Leadership development, mentorship circles, and career guidance to empower emerging voices in our community.",
-    image:
-      "https://images.unsplash.com/photo-1515169067868-5387ec356754?w=1200&q=80",
+    startIndex: 2,
   },
   {
     title: "Culture & Heritage",
     description:
       "Cultural events, storytelling, and heritage showcases that celebrate and preserve our shared identity.",
-    image:
-      "https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=1200&q=80",
+    startIndex: 4,
   },
   {
     title: "Strategic Networking",
     description:
       "Structured mixers and workshops where members collaborate, share ideas, and grow together.",
-    image:
-      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200&q=80",
+    startIndex: 3,
   },
 ];
 
@@ -75,12 +75,13 @@ function HeroHeader() {
   return (
     <section className="relative isolate overflow-hidden border-b border-cyan-300/10">
       <div className="absolute inset-0 -z-10">
-        <Image
-          src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1920&q=80"
+        <PhotoCarousel
+          images={COMMUNITY_PHOTOS}
           alt="What we do hero"
-          fill
+          intervalMs={6000}
           priority
-          className="object-cover"
+          showDots={false}
+          startIndex={1}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-slate-950/80 to-cyan-950/80" />
       </div>
@@ -119,13 +120,13 @@ function ProgramsSection() {
             className="group overflow-hidden rounded-3xl border border-cyan-200/15 bg-slate-900/40 transition hover:-translate-y-1 hover:border-amber-300/40"
           >
             <div className="relative h-48 w-full overflow-hidden sm:h-56">
-              <Image
-                src={program.image}
+              <PhotoCarousel
+                images={COMMUNITY_PHOTOS}
                 alt={program.title}
-                fill
-                className="object-cover transition duration-500 group-hover:scale-105"
+                intervalMs={6000}
+                startIndex={program.startIndex}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
             </div>
             <div className="p-5">
               <h3 className="text-lg font-semibold text-white">

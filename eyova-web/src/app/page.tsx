@@ -7,6 +7,10 @@ import { formatDate } from "@/lib/data";
 import type { ClubEvent } from "@/lib/data";
 import { useEvents, useMembers } from "@/hooks/use-content";
 import { EventModal } from "@/components/event-modal";
+import {
+  COMMUNITY_PHOTOS,
+  PhotoCarousel,
+} from "@/components/photo-carousel";
 
 export default function Home() {
   const { events } = useEvents();
@@ -61,12 +65,13 @@ function Hero({
   return (
     <section className="relative isolate overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <Image
-          src="https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=1920&q=80"
-          alt="Community gathering"
-          fill
+        <PhotoCarousel
+          images={COMMUNITY_PHOTOS}
+          alt="Eyova community gathering"
+          intervalMs={6000}
+          showDots={false}
           priority
-          className="object-cover"
+          className="h-full w-full"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-slate-950/80 to-cyan-950/80" />
       </div>
@@ -130,13 +135,12 @@ function Hero({
 
           <div className="relative hidden md:block">
             <div className="absolute -inset-6 -z-10 rounded-[32px] bg-gradient-to-br from-cyan-400/20 via-amber-300/10 to-transparent blur-2xl" />
-            <div className="relative overflow-hidden rounded-[28px] border border-cyan-200/20 shadow-2xl shadow-cyan-900/30">
-              <Image
-                src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200&q=80"
-                alt="Youth community"
-                width={1000}
-                height={1200}
-                className="h-[480px] w-full object-cover"
+            <div className="relative h-[480px] overflow-hidden rounded-[28px] border border-cyan-200/20 shadow-2xl shadow-cyan-900/30">
+              <PhotoCarousel
+                images={COMMUNITY_PHOTOS}
+                alt="Eyova Social Club members"
+                intervalMs={5000}
+                priority
               />
             </div>
             <div className="absolute -bottom-6 left-6 flex items-center gap-3 rounded-2xl border border-cyan-200/20 bg-slate-950/80 px-4 py-3 backdrop-blur">
@@ -168,13 +172,12 @@ function Mission() {
     <section className="mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20">
       <div className="grid items-center gap-8 md:grid-cols-2 md:gap-10">
         <div className="relative">
-          <div className="overflow-hidden rounded-3xl border border-cyan-200/15">
-            <Image
-              src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1200&q=80"
+          <div className="relative h-60 overflow-hidden rounded-3xl border border-cyan-200/15 sm:h-72 md:h-[380px]">
+            <PhotoCarousel
+              images={COMMUNITY_PHOTOS}
               alt="Community initiatives"
-              width={900}
-              height={700}
-              className="h-60 w-full object-cover sm:h-72 md:h-[380px]"
+              intervalMs={5500}
+              startIndex={2}
             />
           </div>
           <div className="absolute -bottom-6 -right-6 hidden rounded-2xl border border-amber-300/30 bg-slate-950/90 p-4 md:block">
