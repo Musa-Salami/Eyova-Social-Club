@@ -14,14 +14,14 @@ import {
   deleteEvent as removeEvent,
   deleteGalleryImage as removeGalleryImage,
   deleteMember as removeMember,
+  hideDefaultImage,
+  unhideDefaultImage,
   updateEvent as patchEvent,
   updateMember as patchMember,
 } from "@/lib/content-store";
 import { useEvents, useGallery, useMembers } from "@/hooks/use-content";
 import { compressImage } from "@/lib/image";
 import { ImageCropper } from "@/components/image-cropper";
-import { COMMUNITY_PHOTOS } from "@/lib/community-photos";
-
 type Section = "overview" | "events" | "members" | "gallery";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // pre-compression guard: 10 MB
@@ -89,7 +89,12 @@ export default function AdminPage() {
 
   const { events, loading: loadingEvents } = useEvents();
   const { members, loading: loadingMembers } = useMembers();
-  const { gallery, loading: loadingGallery } = useGallery();
+  const {
+    gallery,
+    hiddenDefaults,
+    visibleDefaults,
+    loading: loadingGallery,
+  } = useGallery();
 
   const [galleryTitle, setGalleryTitle] = useState("");
   const [galleryFile, setGalleryFile] = useState<File | null>(null);
@@ -455,6 +460,32 @@ export default function AdminPage() {
       setGalleryMessageKind("error");
       setGalleryMessage(
         err instanceof Error ? err.message : "Failed to delete image.",
+      );
+    }
+  };
+
+  const hideDefault = async (url: string) => {
+    try {
+      await hideDefaultImage(url);
+      setGalleryMessageKind("info");
+      setGalleryMessage("Default image hidden from the carousel.");
+    } catch (err) {
+      setGalleryMessageKind("error");
+      setGalleryMessage(
+        err instanceof Error ? err.message : "Failed to hide image.",
+      );
+    }
+  };
+
+  const restoreDefault = async (id: string) => {
+    try {
+      await unhideDefaultImage(id);
+      setGalleryMessageKind("info");
+      setGalleryMessage("Default image restored.");
+    } catch (err) {
+      setGalleryMessageKind("error");
+      setGalleryMessage(
+        err instanceof Error ? err.message : "Failed to restore image.",
       );
     }
   };
@@ -1077,8 +1108,8 @@ export default function AdminPage() {
               Carousel Library
             </h2>
             <p className="mt-1 text-xs text-slate-400">
-              Uploaded images can be removed. Default photos are built into the
-              site and always display.
+              All images in the carousel can be hidden. Default photos hidden
+              here can be restored below at any time.
             </p>
             {loadingGallery ? (
               <p className="mt-4 text-xs text-slate-400">Loading images...</p>
@@ -1112,7 +1143,7 @@ export default function AdminPage() {
                   </figcaption>
                 </figure>
               ))}
-              {COMMUNITY_PHOTOS.map((url) => (
+              {visibleDefaults.map((url) => (
                 <figure
                   key={url}
                   className="relative overflow-hidden rounded-xl border border-cyan-200/15 bg-slate-950/60"
@@ -1128,9 +1159,61 @@ export default function AdminPage() {
                       Default
                     </span>
                   </div>
+                  <figcaption className="flex items-center justify-between gap-2 p-2 text-[11px] text-slate-300">
+                    <span className="truncate">Built-in photo</span>
+                    <button
+                      type="button"
+                      onClick={() => hideDefault(url)}
+                      className="rounded-md border border-rose-400/40 px-2 py-0.5 text-[10px] font-semibold text-rose-200 hover:bg-rose-400/10"
+                    >
+                      Remove
+                    </button>
+                  </figcaption>
                 </figure>
               ))}
             </div>
+
+            {hiddenDefaults.length > 0 ? (
+              <div className="mt-6 rounded-xl border border-slate-700/60 bg-slate-950/60 p-4">
+                <h3 className="text-sm font-semibold text-slate-200">
+                  Hidden default photos
+                </h3>
+                <p className="mt-1 text-xs text-slate-400">
+                  These defaults are currently hidden from the carousel.
+                  Restore any to show them again.
+                </p>
+                <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {hiddenDefaults.map((item) => (
+                    <figure
+                      key={item.id}
+                      className="relative overflow-hidden rounded-xl border border-slate-600/40 bg-slate-950/60"
+                    >
+                      <div className="relative aspect-square w-full">
+                        <Image
+                          src={item.url}
+                          alt="Hidden default image"
+                          fill
+                          className="object-cover opacity-60"
+                        />
+                        <span className="absolute left-2 top-2 rounded-full border border-slate-500/40 bg-slate-950/80 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-slate-300">
+                          Hidden
+                        </span>
+                      </div>
+                      <figcaption className="flex items-center justify-between gap-2 p-2 text-[11px] text-slate-300">
+                        <span className="truncate">Built-in photo</span>
+                        <button
+                          type="button"
+                          onClick={() => restoreDefault(item.id)}
+                          className="rounded-md border border-emerald-400/40 px-2 py-0.5 text-[10px] font-semibold text-emerald-200 hover:bg-emerald-400/10"
+                        >
+                          Restore
+                        </button>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </section>
         </div>
       ) : null}

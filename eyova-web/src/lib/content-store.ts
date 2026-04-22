@@ -22,6 +22,7 @@ import type { ClubEvent, Member } from "@/lib/data";
 const EVENTS_COLLECTION = "events";
 const MEMBERS_COLLECTION = "members";
 const GALLERY_COLLECTION = "gallery";
+const GALLERY_HIDDEN_COLLECTION = "galleryHidden";
 
 type FirestoreEvent = Omit<ClubEvent, "id">;
 type FirestoreMember = Omit<Member, "id">;
@@ -34,6 +35,12 @@ export interface GalleryImage {
 }
 
 type FirestoreGalleryImage = Omit<GalleryImage, "id">;
+
+export interface HiddenDefault {
+  id: string;
+  url: string;
+  createdAt?: unknown;
+}
 
 export function subscribeEvents(
   callback: (events: ClubEvent[]) => void,
@@ -172,4 +179,36 @@ export async function createGalleryImage(data: FirestoreGalleryImage) {
 export async function deleteGalleryImage(id: string) {
   const db = getDb();
   return deleteDoc(doc(db, GALLERY_COLLECTION, id));
+}
+
+export function subscribeHiddenDefaults(
+  callback: (items: HiddenDefault[]) => void,
+  onError?: (error: Error) => void,
+) {
+  const db = getDb();
+  const q = query(collection(db, GALLERY_HIDDEN_COLLECTION));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const items: HiddenDefault[] = snapshot.docs.map((docSnap) => ({
+        id: docSnap.id,
+        ...(docSnap.data() as Omit<HiddenDefault, "id">),
+      }));
+      callback(items);
+    },
+    (error) => onError?.(error),
+  );
+}
+
+export async function hideDefaultImage(url: string) {
+  const db = getDb();
+  return addDoc(collection(db, GALLERY_HIDDEN_COLLECTION), {
+    url,
+    createdAt: serverTimestamp(),
+  });
+}
+
+export async function unhideDefaultImage(id: string) {
+  const db = getDb();
+  return deleteDoc(doc(db, GALLERY_HIDDEN_COLLECTION, id));
 }
