@@ -14,9 +14,9 @@ const amounts = [
 ];
 
 const bankDetails = {
-  bankName: "Access Bank",
+  bankName: "TAJ Bank",
   accountName: "Eyova Social Club",
-  accountNumber: "0123456789",
+  accountNumber: "0005875613",
   currency: "NGN",
 };
 
