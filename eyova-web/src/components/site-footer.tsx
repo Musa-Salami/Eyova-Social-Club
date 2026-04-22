@@ -59,12 +59,46 @@ export function SiteFooter() {
             For partnerships, collaborations, or to join our community,
             reach out anytime.
           </p>
-          <a
-            href="mailto:eyovaclub@gmail.com"
-            className="mt-3 inline-flex rounded-lg border border-cyan-300/30 px-3 py-1.5 text-xs text-cyan-200 hover:bg-cyan-300/10"
-          >
-            eyovaclub@gmail.com
-          </a>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <a
+              href="mailto:eyovaclub@gmail.com"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-300/30 px-3 py-1.5 text-xs text-cyan-200 hover:bg-cyan-300/10"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-3.5 w-3.5"
+                aria-hidden="true"
+              >
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m3.5 6 8.5 7 8.5-7" />
+              </svg>
+              eyovaclub@gmail.com
+            </a>
+            <a
+              href="https://www.facebook.com/profile.php?id=100086977344332"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Eyova Social Club on Facebook"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-300/30 px-3 py-1.5 text-xs text-cyan-200 transition hover:border-amber-300/60 hover:bg-amber-300/10 hover:text-amber-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-3.5 w-3.5"
+                aria-hidden="true"
+              >
+                <path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.7V4.2c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.4V14h2.7v8h3.4Z" />
+              </svg>
+              Facebook
+            </a>
+          </div>
         </div>
       </div>
       <div className="border-t border-cyan-300/10">

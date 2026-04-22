@@ -375,12 +375,14 @@ function FinalCTA() {
             >
               Email us
             </a>
-            <Link
-              href="/what-we-do"
+            <a
+              href="https://www.facebook.com/profile.php?id=100086977344332"
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-full border border-cyan-200/40 bg-white/5 px-6 py-3 text-center text-sm font-semibold text-cyan-100 hover:bg-cyan-300/10"
             >
-              See what we do
-            </Link>
+              Message on Facebook
+            </a>
           </div>
         </div>
       </div>
