@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { SVGProps } from "react";
+import { useEffect, useState, type SVGProps } from "react";
 
 type NavIcon = (props: SVGProps<SVGSVGElement>) => React.ReactElement;
 
@@ -78,30 +78,50 @@ const HeartIcon: NavIcon = (props) => (
   </svg>
 );
 
-const navLinks: {
-  href: string;
-  label: string;
-  Icon: NavIcon;
-}[] = [
+const navLinks: { href: string; label: string; Icon: NavIcon }[] = [
   { href: "/", label: "Home", Icon: HomeIcon },
   { href: "/what-we-do", label: "What we do", Icon: SparklesIcon },
   { href: "/members", label: "Members", Icon: UsersIcon },
   { href: "/donate", label: "Donate", Icon: HeartIcon },
 ];
 
+function isActive(pathname: string | null, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname?.startsWith(href) ?? false;
+}
+
 export function SiteHeader() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-cyan-300/20 bg-slate-950/80 backdrop-blur-xl">
-      <div className="mx-auto flex min-h-16 w-full max-w-6xl items-center gap-3 px-3 py-2 md:px-6">
+    <header className="sticky top-0 z-40 border-b border-cyan-300/20 bg-slate-950/85 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-3 px-4 md:h-16 md:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <Image
             src="/eyova-logo.jpg"
             alt="Eyova Social Club logo"
             width={34}
             height={34}
-            className="rounded-lg border border-cyan-300/25"
+            className="h-8 w-8 rounded-lg border border-cyan-300/25 md:h-9 md:w-9"
           />
           <span className="hidden text-sm font-semibold tracking-wide text-cyan-200 sm:inline">
             EYOVA SOCIAL CLUB
@@ -110,19 +130,19 @@ export function SiteHeader() {
             EYOVA
           </span>
         </Link>
+
         <nav
           aria-label="Primary"
-          className="scrollbar-none ml-auto inline-flex flex-wrap items-center gap-1 overflow-x-auto rounded-full border border-cyan-200/15 bg-slate-950/60 p-1 text-xs"
+          className="ml-auto hidden items-center gap-1 rounded-full border border-cyan-200/15 bg-slate-950/60 p-1 text-xs md:inline-flex"
         >
           {navLinks.map(({ href, label, Icon }) => {
-            const active =
-              href === "/" ? pathname === "/" : pathname?.startsWith(href);
+            const active = isActive(pathname, href);
             return (
               <Link
                 key={href}
                 href={href}
                 aria-label={label}
-                className={`group inline-flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 font-semibold transition ${
+                className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 font-semibold transition ${
                   active
                     ? "bg-amber-400 text-slate-950"
                     : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
@@ -138,7 +158,97 @@ export function SiteHeader() {
             );
           })}
         </nav>
+
+        <button
+          type="button"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+          onClick={() => setOpen((prev) => !prev)}
+          className="ml-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-cyan-200/25 bg-slate-900/60 text-cyan-100 transition hover:border-amber-300/60 hover:text-amber-200 md:hidden"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5"
+            aria-hidden="true"
+          >
+            {open ? (
+              <path d="M6 6l12 12M18 6L6 18" />
+            ) : (
+              <>
+                <path d="M4 7h16" />
+                <path d="M4 12h16" />
+                <path d="M4 17h16" />
+              </>
+            )}
+          </svg>
+        </button>
       </div>
+
+      {open ? (
+        <>
+          <button
+            type="button"
+            aria-label="Close menu overlay"
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 top-14 z-30 cursor-default bg-slate-950/70 backdrop-blur-sm md:hidden"
+          />
+          <nav
+            id="mobile-nav"
+            aria-label="Mobile"
+            className="absolute inset-x-0 top-14 z-40 border-b border-cyan-300/20 bg-slate-950/95 shadow-2xl shadow-slate-950/70 md:hidden"
+          >
+            <ul className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-4 py-3">
+              {navLinks.map(({ href, label, Icon }) => {
+                const active = isActive(pathname, href);
+                return (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      onClick={() => setOpen(false)}
+                      className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
+                        active
+                          ? "border-amber-300/60 bg-amber-400/15 text-amber-200"
+                          : "border-cyan-200/10 bg-slate-900/40 text-slate-200 hover:border-cyan-200/40 hover:text-white"
+                      }`}
+                    >
+                      <span
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${
+                          active
+                            ? "border-amber-300/50 bg-amber-400/10 text-amber-200"
+                            : "border-cyan-200/15 bg-slate-950/60 text-cyan-200"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="flex-1">{label}</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-4 w-4 opacity-70"
+                        aria-hidden="true"
+                      >
+                        <path d="M9 6l6 6-6 6" />
+                      </svg>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        </>
+      ) : null}
     </header>
   );
 }

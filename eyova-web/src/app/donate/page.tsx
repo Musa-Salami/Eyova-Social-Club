@@ -79,29 +79,29 @@ function Hero() {
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-slate-950/80 to-cyan-950/80" />
       </div>
 
-      <div className="mx-auto w-full max-w-6xl px-4 py-16 md:px-6 md:py-24">
+      <div className="mx-auto w-full max-w-6xl px-4 py-12 md:px-6 md:py-24">
         <div className="max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-300">
             Support Our Mission
           </p>
-          <h1 className="mt-3 text-4xl font-bold leading-tight text-white md:text-5xl">
+          <h1 className="mt-3 text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl">
             Your donation keeps our community moving forward.
           </h1>
-          <p className="mt-4 text-base text-slate-200 md:text-lg">
+          <p className="mt-4 text-sm text-slate-200 sm:text-base md:text-lg">
             Every contribution — large or small — helps us organise events,
             support youth programs, and preserve our cultural heritage.
             Together, one voice becomes one force for change.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap md:mt-8">
             <a
               href="#give"
-              className="rounded-full bg-amber-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/30 transition hover:bg-amber-300"
+              className="rounded-full bg-amber-400 px-6 py-3 text-center text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/30 transition hover:bg-amber-300"
             >
               Give now
             </a>
             <a
               href="#other-ways"
-              className="rounded-full border border-cyan-200/40 bg-white/5 px-6 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/10"
+              className="rounded-full border border-cyan-200/40 bg-white/5 px-6 py-3 text-center text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/10"
             >
               Other ways to help
             </a>
@@ -114,16 +114,16 @@ function Hero() {
 
 function ImpactGrid() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-20 md:px-6">
-      <div className="mb-10 max-w-2xl">
+    <section className="mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20">
+      <div className="mb-8 max-w-2xl md:mb-10">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300">
           Where your gift goes
         </p>
-        <h2 className="mt-3 text-3xl font-bold text-white md:text-4xl">
+        <h2 className="mt-3 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
           Every Naira we receive powers community impact.
         </h2>
       </div>
-      <div className="grid gap-5 md:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3">
         {impactAreas.map((item) => (
           <article
             key={item.title}
@@ -167,15 +167,15 @@ function AmountsAndBank() {
       id="give"
       className="border-t border-cyan-300/10 bg-slate-900/40"
     >
-      <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-16 md:grid-cols-[1.1fr,1fr] md:px-6 md:py-20">
+      <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-12 sm:gap-8 md:grid-cols-[1.1fr,1fr] md:px-6 md:py-20">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-300">
             Choose an amount
           </p>
-          <h2 className="mt-3 text-3xl font-bold text-white md:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
             Pick a level that feels right for you.
           </h2>
-          <p className="mt-3 max-w-xl text-slate-300">
+          <p className="mt-3 max-w-xl text-sm text-slate-300 md:text-base">
             Select a suggested amount or give any custom figure. All
             donations are acknowledged with a thank-you email and quarterly
             impact updates.
@@ -322,21 +322,21 @@ function OtherWays() {
   return (
     <section
       id="other-ways"
-      className="mx-auto w-full max-w-6xl px-4 py-20 md:px-6"
+      className="mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20"
     >
-      <div className="mb-10 max-w-2xl">
+      <div className="mb-8 max-w-2xl md:mb-10">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-300">
           Beyond money
         </p>
-        <h2 className="mt-3 text-3xl font-bold text-white md:text-4xl">
+        <h2 className="mt-3 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
           Other ways to support the club.
         </h2>
-        <p className="mt-3 text-slate-300">
+        <p className="mt-3 text-sm text-slate-300 md:text-base">
           Not in a position to donate right now? You can still make a huge
           difference.
         </p>
       </div>
-      <div className="grid gap-5 md:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3">
         {otherWays.map((way) => (
           <article
             key={way.title}
@@ -353,31 +353,31 @@ function OtherWays() {
 
 function FinalCTA() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 pb-20 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl border border-cyan-200/20 bg-gradient-to-br from-amber-900/30 via-slate-950 to-cyan-900/40 p-8 md:p-14">
+    <section className="mx-auto w-full max-w-6xl px-4 pb-14 md:px-6 md:pb-20">
+      <div className="relative overflow-hidden rounded-3xl border border-cyan-200/20 bg-gradient-to-br from-amber-900/30 via-slate-950 to-cyan-900/40 p-6 sm:p-8 md:p-14">
         <div className="absolute -right-10 -top-10 h-52 w-52 rounded-full bg-amber-400/20 blur-3xl" />
         <div className="absolute -bottom-16 left-10 h-52 w-52 rounded-full bg-cyan-400/20 blur-3xl" />
         <div className="relative grid gap-6 md:grid-cols-[2fr,1fr] md:items-center">
           <div>
-            <h2 className="text-3xl font-bold text-white md:text-4xl">
+            <h2 className="text-2xl font-bold text-white sm:text-3xl md:text-4xl">
               Questions about donating?
             </h2>
-            <p className="mt-3 text-slate-200">
+            <p className="mt-3 text-sm text-slate-200 md:text-base">
               Whether you&apos;re giving once, giving monthly, or planning a
               corporate partnership, we&apos;d love to talk. Reach out and our
               team will get back to you.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3 md:justify-end">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap md:justify-end">
             <a
               href="mailto:eyovaclub@gmail.com?subject=Donation%20enquiry"
-              className="rounded-full bg-amber-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/30 hover:bg-amber-300"
+              className="rounded-full bg-amber-400 px-6 py-3 text-center text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/30 hover:bg-amber-300"
             >
               Email us
             </a>
             <Link
               href="/what-we-do"
-              className="rounded-full border border-cyan-200/40 bg-white/5 px-6 py-3 text-sm font-semibold text-cyan-100 hover:bg-cyan-300/10"
+              className="rounded-full border border-cyan-200/40 bg-white/5 px-6 py-3 text-center text-sm font-semibold text-cyan-100 hover:bg-cyan-300/10"
             >
               See what we do
             </Link>

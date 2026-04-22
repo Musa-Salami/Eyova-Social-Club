@@ -71,7 +71,7 @@ function Hero({
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950/95 via-slate-950/80 to-cyan-950/80" />
       </div>
 
-      <div className="mx-auto w-full max-w-6xl px-4 py-20 md:px-6 md:py-28">
+      <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:py-16 md:px-6 md:py-28">
         <div className="grid items-center gap-10 md:grid-cols-2">
           <div>
             <div className="flex items-center gap-3">
@@ -80,42 +80,42 @@ function Hero({
                 alt="Eyova logo"
                 width={56}
                 height={56}
-                className="rounded-xl border border-cyan-300/30"
+                className="h-12 w-12 rounded-xl border border-cyan-300/30 md:h-14 md:w-14"
               />
-              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-300">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-amber-300 sm:text-xs sm:tracking-[0.3em]">
                 Ebira Youths • One Voice • Abuja
               </span>
             </div>
 
-            <h1 className="mt-6 text-4xl font-bold leading-tight text-white md:text-5xl">
+            <h1 className="mt-5 text-3xl font-bold leading-tight text-white sm:text-4xl md:mt-6 md:text-5xl">
               One Community.
               <span className="block bg-gradient-to-r from-amber-300 via-cyan-200 to-amber-300 bg-clip-text text-transparent">
                 One Voice. One Future.
               </span>
             </h1>
 
-            <p className="mt-5 max-w-xl text-base text-slate-200 md:text-lg">
+            <p className="mt-4 max-w-xl text-sm text-slate-200 sm:text-base md:mt-5 md:text-lg">
               Eyova Social Club empowers youths through unity, culture, social
               impact, and collaboration. Join us as we build a stronger, more
               inclusive Ebira community in Abuja and beyond.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap md:mt-8">
               <Link
                 href="/what-we-do"
-                className="rounded-full bg-amber-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/30 transition hover:bg-amber-300"
+                className="rounded-full bg-amber-400 px-6 py-3 text-center text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/30 transition hover:bg-amber-300"
               >
                 Explore Our Events
               </Link>
               <Link
                 href="/members"
-                className="rounded-full border border-cyan-200/40 bg-white/5 px-6 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/10"
+                className="rounded-full border border-cyan-200/40 bg-white/5 px-6 py-3 text-center text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/10"
               >
                 Meet Our Members
               </Link>
             </div>
 
-            <div className="mt-8 grid max-w-md grid-cols-3 gap-3 text-center">
+            <div className="mt-7 grid max-w-md grid-cols-3 gap-2 text-center sm:gap-3 md:mt-8">
               <HeroBadge
                 label="Members"
                 value={`${stats.totalMembers}+`}
@@ -154,9 +154,9 @@ function Hero({
 
 function HeroBadge({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-cyan-200/20 bg-white/5 p-3 backdrop-blur">
-      <p className="text-xl font-bold text-white">{value}</p>
-      <p className="text-[10px] uppercase tracking-widest text-cyan-200">
+    <div className="rounded-2xl border border-cyan-200/20 bg-white/5 px-2 py-2.5 backdrop-blur sm:p-3">
+      <p className="text-lg font-bold text-white sm:text-xl">{value}</p>
+      <p className="text-[9px] uppercase tracking-widest text-cyan-200 sm:text-[10px]">
         {label}
       </p>
     </div>
@@ -165,8 +165,8 @@ function HeroBadge({ label, value }: { label: string; value: string }) {
 
 function Mission() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-20 md:px-6">
-      <div className="grid items-center gap-10 md:grid-cols-2">
+    <section className="mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20">
+      <div className="grid items-center gap-8 md:grid-cols-2 md:gap-10">
         <div className="relative">
           <div className="overflow-hidden rounded-3xl border border-cyan-200/15">
             <Image
@@ -174,7 +174,7 @@ function Mission() {
               alt="Community initiatives"
               width={900}
               height={700}
-              className="h-[380px] w-full object-cover"
+              className="h-60 w-full object-cover sm:h-72 md:h-[380px]"
             />
           </div>
           <div className="absolute -bottom-6 -right-6 hidden rounded-2xl border border-amber-300/30 bg-slate-950/90 p-4 md:block">
@@ -191,16 +191,16 @@ function Mission() {
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300">
             About Us
           </p>
-          <h2 className="mt-3 text-3xl font-bold text-white md:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
             Building a united Ebira youth voice in Abuja.
           </h2>
-          <p className="mt-4 text-slate-300">
+          <p className="mt-4 text-sm text-slate-300 md:text-base">
             We bring together young people passionate about cultural identity,
             social impact, and collective growth. Through community events,
             mentorship, and advocacy, we create opportunities for members to
             thrive, connect, and serve.
           </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-4">
             <Pillar title="Unity" description="One people, one voice." />
             <Pillar title="Impact" description="Programs that uplift lives." />
             <Pillar title="Culture" description="Honoring our heritage." />
@@ -239,7 +239,7 @@ function ImpactStats({
 }) {
   return (
     <section className="border-y border-cyan-300/10 bg-slate-900/40">
-      <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-14 md:grid-cols-4 md:px-6">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-4 px-4 py-10 sm:gap-6 md:grid-cols-4 md:px-6 md:py-14">
         <Stat label="Members" value={stats.totalMembers} accent="cyan" />
         <Stat label="Events" value={stats.totalEvents} accent="amber" />
         <Stat label="Upcoming" value={stats.upcomingCount} accent="cyan" />
@@ -262,8 +262,10 @@ function Stat({
     accent === "cyan" ? "text-cyan-200" : "text-amber-300";
   return (
     <div className="text-center">
-      <p className={`text-5xl font-bold ${accentColor}`}>{value}</p>
-      <p className="mt-2 text-xs uppercase tracking-[0.3em] text-slate-400">
+      <p className={`text-3xl font-bold sm:text-4xl md:text-5xl ${accentColor}`}>
+        {value}
+      </p>
+      <p className="mt-2 text-[10px] uppercase tracking-[0.25em] text-slate-400 sm:text-xs sm:tracking-[0.3em]">
         {label}
       </p>
     </div>
@@ -278,19 +280,19 @@ function EventsShowcase({
   onSelect: (event: ClubEvent) => void;
 }) {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-20 md:px-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <section className="mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20">
+      <div className="flex flex-wrap items-end justify-between gap-3 sm:gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300">
             What&apos;s next
           </p>
-          <h2 className="mt-2 text-3xl font-bold text-white md:text-4xl">
+          <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
             Upcoming Events
           </h2>
         </div>
         <Link
           href="/what-we-do"
-          className="rounded-full border border-amber-300/40 px-5 py-2 text-sm text-amber-200 hover:bg-amber-300/10"
+          className="rounded-full border border-amber-300/40 px-4 py-1.5 text-xs text-amber-200 hover:bg-amber-300/10 sm:px-5 sm:py-2 sm:text-sm"
         >
           View all events →
         </Link>
@@ -309,7 +311,7 @@ function EventsShowcase({
           to see past events.
         </div>
       ) : (
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-5 md:mt-8 md:grid-cols-3">
           {events.map((event) => (
             <button
               key={event.id}
@@ -317,7 +319,7 @@ function EventsShowcase({
               onClick={() => onSelect(event)}
               className="group flex flex-col overflow-hidden rounded-3xl border border-cyan-200/15 bg-slate-900/40 text-left transition hover:-translate-y-1 hover:border-amber-300/40 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
             >
-              <div className="relative h-48 w-full overflow-hidden">
+              <div className="relative h-44 w-full overflow-hidden sm:h-48">
                 <Image
                   src={event.banner}
                   alt={event.title}
@@ -370,31 +372,31 @@ function TeamPreview({
 }) {
   return (
     <section className="border-t border-cyan-300/10 bg-slate-900/40">
-      <div className="mx-auto w-full max-w-6xl px-4 py-20 md:px-6">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20">
+        <div className="flex flex-wrap items-end justify-between gap-3 sm:gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-300">
               Our people
             </p>
-            <h2 className="mt-2 text-3xl font-bold text-white md:text-4xl">
+            <h2 className="mt-2 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
               Meet the Leadership
             </h2>
           </div>
           <Link
             href="/members"
-            className="rounded-full border border-cyan-200/40 px-5 py-2 text-sm text-cyan-200 hover:bg-cyan-300/10"
+            className="rounded-full border border-cyan-200/40 px-4 py-1.5 text-xs text-cyan-200 hover:bg-cyan-300/10 sm:px-5 sm:py-2 sm:text-sm"
           >
             View members →
           </Link>
         </div>
 
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-5 md:mt-8 md:grid-cols-3">
           {members.map((member) => (
             <article
               key={member.id}
-              className="group rounded-3xl border border-cyan-200/15 bg-slate-950/60 p-5 transition hover:-translate-y-1 hover:border-cyan-200/40"
+              className="group rounded-3xl border border-cyan-200/15 bg-slate-950/60 p-4 transition hover:-translate-y-1 hover:border-cyan-200/40 sm:p-5"
             >
-              <div className="mx-auto h-28 w-28 overflow-hidden rounded-2xl border border-cyan-200/20">
+              <div className="mx-auto h-24 w-24 overflow-hidden rounded-2xl border border-cyan-200/20 sm:h-28 sm:w-28">
                 <Image
                   src={member.passport}
                   alt={member.fullName}
@@ -423,31 +425,31 @@ function TeamPreview({
 
 function CallToAction() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-20 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl border border-cyan-200/20 bg-gradient-to-br from-cyan-900/60 via-slate-950 to-amber-900/30 p-8 md:p-14">
+    <section className="mx-auto w-full max-w-6xl px-4 py-14 md:px-6 md:py-20">
+      <div className="relative overflow-hidden rounded-3xl border border-cyan-200/20 bg-gradient-to-br from-cyan-900/60 via-slate-950 to-amber-900/30 p-6 sm:p-8 md:p-14">
         <div className="absolute -right-10 -top-10 h-52 w-52 rounded-full bg-amber-400/20 blur-3xl" />
         <div className="absolute -bottom-16 left-10 h-52 w-52 rounded-full bg-cyan-400/20 blur-3xl" />
         <div className="relative grid gap-6 md:grid-cols-[2fr,1fr] md:items-center">
           <div>
-            <h2 className="text-3xl font-bold text-white md:text-4xl">
+            <h2 className="text-2xl font-bold text-white sm:text-3xl md:text-4xl">
               Ready to make an impact with us?
             </h2>
-            <p className="mt-3 text-slate-200">
+            <p className="mt-3 text-sm text-slate-200 md:text-base">
               Be part of a movement building unity, cultural pride, and real
               community impact. Join our upcoming events or connect with our
               leadership team today.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3 md:justify-end">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap md:justify-end">
             <Link
               href="/what-we-do"
-              className="rounded-full bg-amber-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/30 hover:bg-amber-300"
+              className="rounded-full bg-amber-400 px-6 py-3 text-center text-sm font-semibold text-slate-950 shadow-lg shadow-amber-500/30 hover:bg-amber-300"
             >
               Join an event
             </Link>
             <Link
               href="/donate"
-              className="rounded-full border border-cyan-200/40 bg-white/5 px-6 py-3 text-sm font-semibold text-cyan-100 hover:bg-cyan-300/10"
+              className="rounded-full border border-cyan-200/40 bg-white/5 px-6 py-3 text-center text-sm font-semibold text-cyan-100 hover:bg-cyan-300/10"
             >
               Donate
             </Link>

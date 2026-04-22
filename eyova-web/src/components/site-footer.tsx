@@ -68,8 +68,8 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-cyan-300/10">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-4 text-xs text-slate-500 md:px-6">
-          <p>
+        <div className="mx-auto flex w-full max-w-6xl flex-col-reverse items-start gap-3 px-4 py-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between md:px-6">
+          <p className="text-[11px] sm:text-xs">
             © {new Date().getFullYear()} Eyova Social Club. All rights
             reserved.
           </p>
